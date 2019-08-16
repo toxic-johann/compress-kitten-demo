@@ -1,0 +1,36 @@
+{
+  "name": "compress-kitten-demo",
+  "version": "1.0.0",
+  "description": "A demo to compress image of kitten",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "kill-port 3000 && node ./index",
+    "deploy": "gh-pages -d public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toxic-johann/compress-kitten-demo.git"
+  },
+  "author": "toxic-johann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toxic-johann/compress-kitten-demo/issues"
+  },
+  "homepage": "https://github.com/toxic-johann/compress-kitten-demo#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "browser-image-compression": "^1.0.6",
+    "connect": "^3.7.0",
+    "kill-port": "^1.5.1",
+    "livereload": "^0.8.0",
+    "serve-static": "^1.14.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-egg": "^7.4.1",
+    "eslint-plugin-eggache": "^1.0.0",
+    "gh-pages": "^2.1.1"
+  }
+}
