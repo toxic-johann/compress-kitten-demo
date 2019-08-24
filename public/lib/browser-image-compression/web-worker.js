@@ -5,7 +5,7 @@ import { getNewCanvasAndCtx } from './utils.js'
 let cnt = 0
 let imageCompressionLibUrl
 let workerIndex = 0;
-const workerCount = 5;
+const workerCount = 1;
 
 function createWorker (f) {
   return new Worker(URL.createObjectURL(new Blob([`(${f})()`])))

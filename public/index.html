@@ -18,7 +18,26 @@
           <label for="kittenNumber">How many kitten do you want?</label>
           <input type="number" placeholder="10" id="kittenNumber">
         </div>
+        <div class="form-group">
+          <label for="workerNumber">How many worker do you want?</label>
+          <input type="number" placeholder="5" id="workerNumber">
+        </div>
         <button id="start">Start</button>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>1 Image in Mainthread</th>
+              <th>1 Image in Worker</th>
+              <th>1 Image in Worker Without Transferable</th>
+              <th>Multiple Images in Mainthread</th>
+              <th>Multiple Images in Worker</th>
+              <th>Multiple Images in Worker Without Transferable</th>
+            </tr>
+          </thead>
+          <tbody id="benchmark-table">
+          </tbody>
+        </table>
       </article>
     </div>
   </div>
