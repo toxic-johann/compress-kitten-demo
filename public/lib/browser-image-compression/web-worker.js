@@ -4,15 +4,18 @@ import { getNewCanvasAndCtx } from './utils.js'
 
 let cnt = 0
 let imageCompressionLibUrl
+let workerIndex = 0;
+const workerCount = 5;
 
 function createWorker (f) {
   return new Worker(URL.createObjectURL(new Blob([`(${f})()`])))
 }
 
-const worker = createWorker(() => {
+const workers = (new Array(workerCount)).fill(0).map(() => createWorker(() => {
   let scriptImported = false
   self.addEventListener('message', async (e) => {
     const { file, id, imageCompressionLibUrl, options } = e.data
+    console.warn(data);
     try {
       if (!scriptImported) {
         // console.log('[worker] importScripts', imageCompressionLibUrl)
@@ -27,7 +30,7 @@ const worker = createWorker(() => {
       self.postMessage({ error: e.message + '\n' + e.stack, id })
     }
   })
-})
+}));
 
 function createSourceObject (str) {
   return URL.createObjectURL(new Blob([str], { type: 'application/javascript' }))
@@ -72,6 +75,9 @@ export function compressOnWebWorker (file, options) {
     }
     let id = cnt++
 
+    const worker = workers[workerIndex];
+    workerIndex = (workerIndex + 1) % workerCount
+
     function handler (e) {
       if (e.data.id === id) {
         worker.removeEventListener('message', handler)
@@ -83,6 +89,7 @@ export function compressOnWebWorker (file, options) {
     }
 
     worker.addEventListener('message', handler)
-    worker.postMessage({ file, id, imageCompressionLibUrl, options })
+    console.log(file);
+    worker.postMessage({ id, imageCompressionLibUrl, options }, [ file ])
   })
 }

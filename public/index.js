@@ -19,27 +19,96 @@ function loadImage (src) {
   });
 }
 
-const timeMap = {};
-window.timeMap = timeMap;
-
-async function main(number = 10, useWebWorker = true) {
+async function getImageFiles(number = 10) {
   const originImages = await Promise.all(
     (new Array(number))
     .fill(0)
     .map((value, index) => loadImage(`https://loremflickr.com/1280/960/kitten?random=${index}`))
     );
   const canvases = await Promise.all(originImages.map(image => imageCompression.drawImageInCanvas(image)));
-  console.log(canvases);
   const files = await Promise.all(canvases.map((canvas, index) => imageCompression.canvasToFile(canvas, 'image/jpeg', `${index}.jpeg`, new Date())));
-  const s1 = Date.now();
+  return files;
+}
+
+async function getImagesFromFiles(files) {
+  const dataUrls = await Promise.all(files.map(file => imageCompression.getDataUrlFromFile(file)));
+  const images = await Promise.all(dataUrls.map(url => loadImage(url)));
+  return images;
+}
+
+async function compressFiles(files, useWebWorker = true) {
+  console.log(`start compressing ${files.length} image in ${useWebWorker ? 'worker' : 'mainthread'}`);
   const compressedFiles = await Promise.all(files.map(file => imageCompression(file, {
     useWebWorker,
   })));
-  const t1 = Date.now() - s1;
-  timeMap[useWebWorker] = t1;
-  const dataUrls = await Promise.all(compressedFiles.map(file => imageCompression.getDataUrlFromFile(file)));
-  const images = await Promise.all(dataUrls.map(url => loadImage(url)));
+  console.log(`finish compressing ${files.length} image in ${useWebWorker ? 'worker' : 'mainthread'}`);
+  return compressedFiles;
 }
-main(1, true);
-main(20, true);
-main(20, false);
+
+async function test() {
+  const files = await getImageFiles(20);
+
+  var suite = new Benchmark.Suite;
+
+  // add tests
+  suite
+  .add('compress 1 images in mainthread', {
+    defer: true,
+    fn(deferred) {
+      const promise = compressFiles([files[0]], false);
+      promise.then(() => {
+        deferred.resolve();
+      });
+    }
+  })
+  .add('compress 20 images in worker', {
+    defer: true,
+    fn(deferred) {
+      const promise = compressFiles([files[0]], true);
+      promise.then(() => {
+        deferred.resolve();
+      });
+    }
+  })
+  .add('compress 20 images in mainthread', {
+    defer: true,
+    fn(deferred) {
+      const promise = compressFiles(files, false);
+      promise.then(() => {
+        deferred.resolve();
+      });
+    }
+  })
+  .add('compress 20 images in worker', {
+    defer: true,
+    fn(deferred) {
+      const promise = compressFiles(files, true);
+      promise.then(() => {
+        deferred.resolve();
+      });
+    }
+  })
+  // add listeners
+  .on('cycle', function(event) {
+    console.log(String(event.target));
+  })
+  .on('complete', function() {
+    console.log('Fastest is ' + this.filter('fastest').map('name'));
+  })
+  // run async
+  .run({ 'async': true });
+}
+
+async function cycle() {
+  const files = await getImageFiles(1);
+  const compressedFiles = await compressFiles(files, true);
+  const images = await getImagesFromFiles(compressFiles);
+  images.forEach(image => document.body.append(image));
+}
+
+cycle();
+
+// test();
+
+
+
