@@ -22,22 +22,47 @@
           <label for="workerNumber">How many worker do you want?</label>
           <input type="number" placeholder="5" id="workerNumber">
         </div>
-        <button id="start">Start</button>
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>1 Image in Mainthread</th>
-              <th>1 Image in Worker</th>
-              <th>1 Image in Worker Without Transferable</th>
-              <th>Multiple Images in Mainthread</th>
-              <th>Multiple Images in Worker</th>
-              <th>Multiple Images in Worker Without Transferable</th>
-            </tr>
-          </thead>
-          <tbody id="benchmark-table">
-          </tbody>
-        </table>
+        <div class="collapsible">
+          <input id="collapsible2" type="checkbox" name="collapsible">
+          <label for="collapsible2">Demo</label>
+          <div class="collapsible-body">
+            <div class="row">
+              <button id="run-demo">Start</button>
+            </div>
+            <div class="row">
+                Serial progress
+                <div class="progress margin-bottom">
+                  <div class="bar w-0" id="mainthread-bar"></div>
+                </div>
+                Parallel progress
+                <div class="progress margin-bottom">
+                  <div class="bar danger w-0" id="worker-bar"></div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="collapsible">
+          <input id="collapsible1" type="checkbox" name="collapsible">
+          <label for="collapsible1">Benchmark</label>
+          <div class="collapsible-body">
+            <button id="run-test">Start</button>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>1 Image in Mainthread</th>
+                  <th>1 Image in Worker</th>
+                  <th>1 Image in Worker Without Transferable</th>
+                  <th>Multiple Images in Mainthread</th>
+                  <th>Multiple Images in Worker</th>
+                  <th>Multiple Images in Worker Without Transferable</th>
+                </tr>
+              </thead>
+              <tbody id="benchmark-table">
+              </tbody>
+            </table>
+          </div>
+        </div>
       </article>
     </div>
   </div>

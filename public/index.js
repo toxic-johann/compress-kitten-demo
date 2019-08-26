@@ -1,11 +1,14 @@
 import imageCompression from './lib/browser-image-compression/index.js';
 import pako from './web_modules/pako-es.js';
 
-const startButton = document.getElementById('start');
-
-startButton.addEventListener('click', test);
+document.getElementById('run-test').addEventListener('click', test);
+document.getElementById('run-demo').addEventListener('click', demo);
 
 let isRunning = false;
+
+function sleep(duration) {
+  return new Promise(resolve => setTimeout(resolve, duration));
+}
 
 function loadImage (src) {
   return new Promise((resolve, reject) => {
@@ -180,6 +183,62 @@ async function test() {
   })
   // run async
   .run({ 'async': true });
+}
+
+function updateBarProgress(barName, progress) {
+  const bar = document.getElementById(`${barName}-bar`);
+  const classname = bar.className;
+  const newClassName = classname.replace(/w-\d+/, `w-${progress}`);
+  bar.className = newClassName;
+}
+
+
+async function demo() {
+  const kittenNumber = parseInt(document.getElementById('kittenNumber').value || 10);
+  const workerNumber = parseInt(document.getElementById('workerNumber').value || 5)
+  const pakoWorker = new PakoWorker(workerNumber);
+  updateBarProgress('worker', 0);
+  updateBarProgress('mainthread', 0);
+  const files = await getImageFiles(kittenNumber);
+  const arrayBuffers = await getImageArrayBuffersFromFiles(files);
+  const arrayBuffersForMainthread = await getImageArrayBuffersFromFiles(files);
+  let finishedCountForWorker = 0;
+  let finishedCountForMainthread = 0;
+
+  const promise = Promise.all(arrayBuffers.map(async (arrayBuffer) =>{
+    const result = await pakoWorker.compress(arrayBuffer);
+    const blob = new Blob([ result ], { type: 'image/jpeg' });
+    const url = window.URL.createObjectURL(blob);
+
+    // const img = new Image(); 
+    // img.src = url;
+    // document.body.append(img);
+
+    finishedCountForWorker++;
+    const progress = parseInt(finishedCountForWorker / kittenNumber * 100);
+    updateBarProgress('worker', progress);
+  }));
+
+  arrayBuffersForMainthread.reduce(async (promise, arrayBuffer) => {
+    await promise;
+    const compressed = pako.deflate(arrayBuffer, { level: 3 });
+    const result = pako.inflate(compressed);
+    const blob = new Blob([ result ], { type: 'image/jpeg' });
+    const url = window.URL.createObjectURL(blob);
+
+    // const img = new Image(); 
+    // img.src = url;
+    // document.body.append(img);
+
+    finishedCountForMainthread++;
+    const progress = parseInt(finishedCountForMainthread / kittenNumber * 100);
+    updateBarProgress('mainthread', progress);
+    return sleep(0);
+  }, sleep(0));
+
+  await promise;
+
+  pakoWorker.destroy();
 }
 
 // async function cycle() {
