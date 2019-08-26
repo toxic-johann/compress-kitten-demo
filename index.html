@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Compress Kitten</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/papercss@1.6.1/dist/paper.min.css">
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <div class="row flex-center">
+    <div class="col paper sm-12 md-8">
+      <article class="article ">
+        <h1>Compress Kitten</h1>
+        <h3>A demo to compress kitten image</h3>
+        <div class="form-group">
+          <label for="kittenNumber">How many kitten do you want?</label>
+          <input type="number" placeholder="10" id="kittenNumber">
+        </div>
+        <div class="form-group">
+          <label for="workerNumber">How many worker do you want?</label>
+          <input type="number" placeholder="5" id="workerNumber">
+        </div>
+        <div class="collapsible">
+          <input id="collapsible2" type="checkbox" name="collapsible">
+          <label for="collapsible2">Demo</label>
+          <div class="collapsible-body">
+            <div class="row">
+              <button id="run-demo">Start</button>
+            </div>
+            <div class="row">
+                Serial progress
+                <div class="progress margin-bottom">
+                  <div class="bar w-0" id="mainthread-bar"></div>
+                </div>
+                Parallel progress
+                <div class="progress margin-bottom">
+                  <div class="bar danger w-0" id="worker-bar"></div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="collapsible">
+          <input id="collapsible1" type="checkbox" name="collapsible">
+          <label for="collapsible1">Benchmark</label>
+          <div class="collapsible-body">
+            <button id="run-test">Start</button>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>1 Image in Mainthread</th>
+                  <th>1 Image in Worker</th>
+                  <th>1 Image in Worker Without Transferable</th>
+                  <th>Multiple Images in Mainthread</th>
+                  <th>Multiple Images in Worker</th>
+                  <th>Multiple Images in Worker Without Transferable</th>
+                </tr>
+              </thead>
+              <tbody id="benchmark-table">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/platform@1.3.5/platform.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/benchmark@2.1.4/benchmark.js"></script>
+<script type="module">
+  import './index.js';
+</script>
+</html>

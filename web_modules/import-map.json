@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "pako-es": "./pako-es.js"
+  }
+}
