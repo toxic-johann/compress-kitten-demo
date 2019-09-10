@@ -241,6 +241,8 @@ async function demo() {
   pakoWorker.destroy();
 }
 
+document.getElementById('user-agent').innerText = navigator.userAgent
+
 // async function cycle() {
 //   const pakoWorker = new PakoWorker();
 //   const files = await getImageFiles(1);
